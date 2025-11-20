@@ -1,7 +1,9 @@
+const BASE_URL = "https://calls-blend-prayer-pour.trycloudflare.com";
+
 document.addEventListener("DOMContentLoaded", function() {
   async function getUserInfo() {
     try {
-      const response = await fetch("https://calls-blend-prayer-pour.trycloudflare.com/me");
+      const response = await fetch(`${BASE_URL}/me`, { credentials: "include" });
       if (response.ok) {
         const user = await response.json();
         document.getElementById("welcome").innerText = `Welcome, ${user.name || "User"}!`;
