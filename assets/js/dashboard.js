@@ -1,4 +1,4 @@
-const BASE_URL = "https://calls-blend-prayer-pour.trycloudflare.com";
+const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
 
 document.addEventListener("DOMContentLoaded", function() {
   async function getUserInfo() {
@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", function() {
   getUserInfo();
 
   // Navigation for Expenses and Income
-  const expensesBtn = document.querySelector("a[href='/expenses.html']");
+  const expensesBtn = document.querySelector("a[href='/expense.html']");
   const incomeBtn = document.querySelector("a[href='/income.html']");
   if (expensesBtn) {
     expensesBtn.onclick = function(e) {
       e.preventDefault();
-      window.location.href = "/expenses.html";
+      window.location.href = "/expense.html";
     };
   }
   if (incomeBtn) {

@@ -2,7 +2,7 @@ let currentYear = 2025;
 let selectedMonth = null;
 let username = null;
 let role = "guest";
-const BASE_URL = "https://calls-blend-prayer-pour.trycloudflare.com";
+const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
 
 
 // async function getUserInfo() {

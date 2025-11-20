@@ -1,3 +1,5 @@
+const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
+
 document.addEventListener("DOMContentLoaded", function() {
   let name = "User";
   let role = "guest";
