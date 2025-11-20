@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   document.getElementById('logoutBtn').onclick = async function() {
       await fetch(`${BASE_URL}/logout`, { method: 'POST', credentials: 'include' });
-      window.location.href = '/';
+      window.location.href = '/index.html';
   };
 });
 

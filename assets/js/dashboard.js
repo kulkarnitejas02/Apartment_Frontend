@@ -9,23 +9,28 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("welcome").innerText = `Welcome, ${user.name || "User"}!`;
         document.getElementById("role").innerText = `Role: ${user.role || "guest"}`;
       }
-    } catch {}
+      if (user.role === "secretary" || user.role === "treasurer") {
+            document.getElementById("admin-panel").style.display = "block";
+        }
+    } catch (err){
+      console.log("Error loading user", err);
+    }
   }
   getUserInfo();
 
   // Navigation for Expenses and Income
-  const expensesBtn = document.querySelector("a[href='/dashboard/expenses']");
-  const incomeBtn = document.querySelector("a[href='/dashboard/income']");
+  const expensesBtn = document.querySelector("a[href='/expenses.html']");
+  const incomeBtn = document.querySelector("a[href='/income.html']");
   if (expensesBtn) {
     expensesBtn.onclick = function(e) {
       e.preventDefault();
-      window.location.href = "/dashboard/expenses";
+      window.location.href = "/expenses.html";
     };
   }
   if (incomeBtn) {
     incomeBtn.onclick = function(e) {
       e.preventDefault();
-      window.location.href = "/dashboard/income";
+      window.location.href = "/income.html";
     };
   }
 
