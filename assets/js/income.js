@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("income.js loaded"); 
   async function getUserInfo() {
     try {
-      const response = await fetch("/me");
+      const response = await fetch(`${BASE_URL}/me`, { credentials: "include" });  // ✔ CORRECT NOW
       if (response.ok) {
         const user = await response.json();
         name = user.name || "User";
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
       console.log("Submitting maintenance data:", data);
       
       try {
-        const response = await fetch(`/income/?username=${encodeURIComponent(username)}`, {
+        const response = await fetch(`${BASE_URL}/income/?username=${encodeURIComponent(username)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tbody.innerHTML = "";
     try {
       // Build URL with optional filters
-      let url = `/income/?username=${encodeURIComponent(username)}`;
+      let url = `${BASE_URL}/income/?username=${encodeURIComponent(username)}`;
       if (year) url += `&year=${encodeURIComponent(year)}`;
       if (month) url += `&month=${encodeURIComponent(month)}`;
       
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Make downloadReceipt function global so HTML buttons can access it
   window.downloadReceipt = async function(maintenanceId){
     try{
-      const response = await fetch(`/income/${maintenanceId}/receipt?username=${encodeURIComponent(username)}`, {
+      const response = await fetch(`${BASE_URL}/income/${maintenanceId}/receipt?username=${encodeURIComponent(username)}`, {
         method: "GET",
         credentials: "include"
       });
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   document.getElementById('logoutBtn').onclick = async function() {
-      await fetch('/logout', { method: 'POST', credentials: 'include' });
+      await fetch(`${BASE_URL}/logout`, { method: 'POST', credentials: 'include' });
       window.location.href = '/';
   };
 });

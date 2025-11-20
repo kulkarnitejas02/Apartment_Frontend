@@ -67,7 +67,7 @@ async function handleForgetPassword() {
   };
 
   try {
-    const response = await fetch("/reset-password", {
+    const response = await fetch("https://calls-blend-prayer-pour.trycloudflare.com/reset-password", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -102,7 +102,7 @@ async function handleRegister() {
   };
 
   try {
-    const response = await fetch("/register", {
+    const response = await fetch("https://calls-blend-prayer-pour.trycloudflare.com/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -128,7 +128,7 @@ async function handleLogin() {
   };
 
   try {
-    const response = await fetch("/login", {
+    const response = await fetch("https://calls-blend-prayer-pour.trycloudflare.com/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)

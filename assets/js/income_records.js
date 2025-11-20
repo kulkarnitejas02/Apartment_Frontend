@@ -2,6 +2,8 @@ let currentYear = 2025;
 let selectedMonth = null;
 let username = null;
 let role = "guest";
+const BASE_URL = "https://calls-blend-prayer-pour.trycloudflare.com";
+
 
 // async function getUserInfo() {
 //     try {
@@ -26,7 +28,7 @@ async function loadYearSummary() {
     currentYear = document.getElementById('yearSelect').value;
     
     try {
-        const response = await fetch(`/income_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}`, {
+        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -92,7 +94,7 @@ async function selectMonth(month, monthTotal, recordCount) {
     
     // Load detailed records
     try {
-        const response = await fetch(`/income_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}&month=${month}`, {
+        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}&month=${month}`, {
             method: 'GET',
             credentials: 'include'
         });

@@ -1,3 +1,5 @@
+const BASE_URL = "https://calls-blend-prayer-pour.trycloudflare.com";
+
 document.addEventListener("DOMContentLoaded", function() {
   let name = "User";
   let role = "guest";
@@ -6,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("expense.js loaded"); 
   async function getUserInfo() {
     try {
-      const response = await fetch("/me");
+      const response = await fetch(`${BASE_URL}/me`, { credentials: "include" });  // ✔ CORRECT NOW
       if (response.ok) {
         const user = await response.json();
         name = user.name || "User";
@@ -56,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   async function loadUsers() {
     try {
-      const response = await fetch("/users");
+      const response = await fetch(`${BASE_URL}/users`, { credentials: "include" });
       const users = await response.json();
       const select = document.getElementById("exp_paid_by");
       select.innerHTML = '<option value="">Select Paid By</option>';
@@ -97,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
         created_by: name
       };
       try {
-        const response = await fetch(`/expenses/?username=${encodeURIComponent(username)}`, {
+        const response = await fetch(`${BASE_URL}/expenses/?username=${encodeURIComponent(username)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -123,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     try {
 
-      let url = `/expenses/?username=${encodeURIComponent(username)}`;
+      let url = `${BASE_URL}/expenses/?username=${encodeURIComponent(username)}`;
       if (year) url += `&year=${encodeURIComponent(year)}`;
       if (month) url += `&month=${encodeURIComponent(month)}`;
       
@@ -148,9 +150,13 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
 
-  document.getElementById('logoutBtn').onclick = async function() {
-      await fetch('/auth/logout', { method: 'POST', credentials: 'include' });
-      window.location.href = '/';
+ document.getElementById("logoutBtn").onclick = async function() {
+    await fetch(`${BASE_URL}/auth/logout`, {   // ✔ FIXED
+      method: "POST",
+      credentials: "include"
+    });
+
+    window.location.href = "/";
   };
 });
 

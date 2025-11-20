@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   async function getUserInfo() {
     try {
-      const response = await fetch("/me");
+      const response = await fetch("https://calls-blend-prayer-pour.trycloudflare.com/me");
       if (response.ok) {
         const user = await response.json();
         document.getElementById("welcome").innerText = `Welcome, ${user.name || "User"}!`;
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   document.getElementById('logoutBtn').onclick = async function() {
-      await fetch('/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch('https://calls-blend-prayer-pour.trycloudflare.com/auth/logout', { method: 'POST', credentials: 'include' });
       window.location.href = '/';
   };
 });

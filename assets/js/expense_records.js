@@ -1,5 +1,7 @@
 let currentYear = 2025;
 let selectedMonth = null;
+const BASE_URL = "https://calls-blend-prayer-pour.trycloudflare.com";
+
 
 const months = ["January", "February", "March", "April", "May", "June",
                "July", "August", "September", "October", "November", "December"];   
@@ -13,7 +15,7 @@ async function loadYearSummaryExpense() {
     currentYear = document.getElementById('yearSelect').value;
 
     try{
-        const response = await fetch(`/expense_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}`,{
+        const response = await fetch(`${BASE_URL}/expense_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}`,{
             method: 'GET',
             credentials: 'include'
         });
@@ -74,7 +76,7 @@ async function selectMonthExpense(month, monthTotal, count) {
     document.getElementById('monthlyCountExpense').textContent = `${count} records`;
     // Load detailed expense records for the selected month
     try{
-        const response = await fetch(`/expense_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}&month=${month}`,{
+        const response = await fetch(`${BASE_URL}/expense_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}&month=${month}`,{
             method: 'GET',
             credentials: 'include'
         });
