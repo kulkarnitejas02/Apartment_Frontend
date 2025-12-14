@@ -1,5 +1,35 @@
 const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
 
+// Navigation function with History API
+function navigateTo(event, path) {
+  event.preventDefault();
+  window.history.pushState({path}, '', path);
+  handleRoute(path);
+}
+
+// Route handler
+function handleRoute(path) {
+  if (path === '/' || path === '') {
+    showLogin();
+  } else if (path === '/register') {
+    showRegister();
+  } else if (path === '/forgot-password') {
+    showForgetPassword();
+  }
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', (event) => {
+  const path = window.location.pathname;
+  handleRoute(path);
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const path = window.location.pathname;
+  handleRoute(path);
+});
+
 // Helper function to show a message
 function showMessage(message, type = 'success') {
   const display = document.getElementById('message-display');
@@ -148,4 +178,5 @@ async function handleLogin() {
     showMessage("An error occurred. Please try again later.", 'error');
   }
 }
+
 
