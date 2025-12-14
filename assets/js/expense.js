@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
         description: document.getElementById("exp_desc").value,
         amount: parseFloat(document.getElementById("exp_amount").value),
         paid_by: parseInt(document.getElementById("exp_paid_by").value),
-        created_by: name
+        created_by: userid
       };
       try {
         const response = await fetch(`${BASE_URL}/expenses/?username=${encodeURIComponent(username)}`, {
