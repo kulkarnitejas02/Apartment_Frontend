@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let role = "guest";
   let username = "";
   let userid = 0;
+  const allowedMaintenanceRoles = ["secretary", "treasurer", "member"];
   console.log("income.js loaded"); 
   async function getUserInfo() {
     try {
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
     } catch {}
     document.getElementById("welcome").innerText = `Welcome, ${name}!`;
     document.getElementById("role").innerText = `Role: ${role}`;
+    applyRoleVisibility();
   }
   getUserInfo();
 
@@ -38,10 +40,13 @@ document.addEventListener("DOMContentLoaded", function() {
   const backFromFormBtn = document.getElementById("back-from-form-btn");
   const backFromTableBtn = document.getElementById("back-from-table-btn");
 
+  if (viewMaintenanceBtn) viewMaintenanceBtn.classList.add("hidden");
+
   if (viewMaintenanceBtn) {
     viewMaintenanceBtn.onclick = function() {
       console.log("View Maintenance clicked");
-      if (role === "secretary" || role === "treasurer" || role === "member") {
+      //if (role === "secretary" || role === "treasurer" || role === "member")
+      if (allowedMaintenanceRoles.includes(role)) {
         if (dashboardCard) dashboardCard.classList.add("hidden");
         if (maintenanceFormCard) maintenanceFormCard.classList.add("hidden");
         if (maintenanceTableCard) maintenanceTableCard.classList.remove("hidden");
@@ -136,6 +141,17 @@ document.addEventListener("DOMContentLoaded", function() {
     };
   }
 
+  function applyRoleVisibility() {
+    if (!allowedMaintenanceRoles) return;
+    if (allowedMaintenanceRoles.includes(role)) {
+      viewMaintenanceBtn.classList.remove("hidden");
+    } else {
+      viewMaintenanceBtn.classList.add("hidden");
+      if (maintenanceTableCard) maintenanceTableCard.classList.add("hidden");
+      if (dashboardCard) dashboardCard.classList.remove("hidden");
+    }
+  }
+  
   async function loadMaintenance(year = null, month = null) {
     const tbody = document.getElementById("maintenance-body");
     if (!tbody) return;

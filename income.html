@@ -10,10 +10,8 @@
     <div class="card" id="dashboard-card">
       <h2 id="welcome"></h2>
       <p id="role"></p>
-      <button id="add-Maintenance-btn" class="dashboard-btn">Create Maintenance Record</button>
-  {% if user.role in ["secretary", "treasurer", "member"] %}
-  <button id="view-Maintenance-btn" class="dashboard-btn">View Maintenance</button>
-  {% endif %}
+        <button id="add-maintenance-btn" class="dashboard-btn">Create Maintenance Record</button>
+        <button id="view-maintenance-btn" class="dashboard-btn">View Maintenance Records</button>
       <button onclick="window.location.href='/dashboard'">Back to Dashboard</button>
     </div>
 
@@ -33,7 +31,6 @@
     </div>
 
     <!-- Maintenance Table (hidden by default) -->
-  {% if user.role in ["secretary", "treasurer", "member"] %}
   <div class="card hidden" id="Maintenance-table-card">
       <h3>Monthly Maintenance</h3>
       
@@ -99,7 +96,6 @@
       </table>
       <button id="back-from-table-btn">Back</button>
     </div>
-  {% endif %}
   </div>
   <button id="logoutBtn">Logout</button>
   <script src="/assets/js/income.js"></script>
