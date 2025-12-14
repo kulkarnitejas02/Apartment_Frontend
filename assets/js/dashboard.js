@@ -1,21 +1,37 @@
 const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
 
 document.addEventListener("DOMContentLoaded", function() {
+  const adminRoles = ["secretary", "treasurer"];
+  let userRole = "guest";
+
   async function getUserInfo() {
     try {
       const response = await fetch(`${BASE_URL}/me`, { credentials: "include" });
       if (response.ok) {
         const user = await response.json();
+        userRole = user.role || "guest";
         document.getElementById("welcome").innerText = `Welcome, ${user.name || "User"}!`;
-        document.getElementById("role").innerText = `Role: ${user.role || "guest"}`;
+        document.getElementById("role").innerText = `Role: ${userRole}`;
+        applyRoleVisibility();
+      } else {
+        console.log("Failed to fetch user info");
       }
-      if (user.role === "secretary" || user.role === "treasurer") {
-            document.getElementById("admin-panel").style.display = "block";
-        }
-    } catch (err){
+    } catch (err) {
       console.log("Error loading user", err);
     }
   }
+
+  function applyRoleVisibility() {
+    const adminPanel = document.getElementById("admin-panel");
+    if (adminPanel) {
+      if (adminRoles.includes(userRole)) {
+        adminPanel.classList.remove("hidden");
+      } else {
+        adminPanel.classList.add("hidden");
+      }
+    }
+  }
+
   getUserInfo();
 
   // Navigation for Expenses and Income
@@ -39,4 +55,5 @@ document.addEventListener("DOMContentLoaded", function() {
       window.location.href = '/';
   };
 });
+
 
