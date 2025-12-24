@@ -19,14 +19,17 @@ def create_expense(
         raise HTTPException(status_code=403, detail="Not authorized - invalid role")
     print("Received expense data from frontend:", expense.dict())
     new_expense = models.Expense(
+        flat_number=expense.flat_number,
         date=expense.date,
         month=expense.month,
         year = expense.year,
         expense_name=expense.expense_name,
         description=expense.description,
         amount=expense.amount,
-        paid_by=expense.user.id,
-        created_by=expense.user.id  # Set created_by to current user's ID
+        paid_by=expense.flat_number,
+        created_by=expense.flat_number
+        #paid_by=expense.user.flat_number,
+        #created_by=expense.user.flat_number  # Set created_by to current user's ID
     )
     print("Incoming expense data:", new_expense)
     try:

@@ -1,6 +1,6 @@
 let currentYear = 2025;
 let selectedMonth = null;
-const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
+const BASE_URL = "https://described-occasionally-break-group.trycloudflare.com";
 
 
 const months = ["January", "February", "March", "April", "May", "June",

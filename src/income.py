@@ -62,21 +62,17 @@ def create_pdf_receipt(maintenance: models.Maintenance, user: models.User):
 @router.post("/", response_model=schemas.MaintenanceOut)
 def create_maintenance(
     maintenance: schemas.MaintenanceCreate,
-    username: str = Query(...),  # Require username as query param
+    username: str = Query(...),
     db: Session = Depends(get_db)
 ):
     user = validate_user_exists(username, db)
     
-    # Convert to dict to inspect the data
-    current_user_id = user.id
+    # Use flat_number instead of id
+    current_user_flat = user.flat_number  # Changed from user.id
     maintenance_data = maintenance.dict()
-    maintenance_data['created_by'] = current_user_id  # Set created_by to current user's ID
+    maintenance_data['created_by'] = current_user_flat  # This will store flat_number
     print(f"Received maintenance data: {maintenance_data}")
     
-        # Convert date string to Python date object
-    # if isinstance(maintenance_data['date'], str):
-    #     maintenance_data['date'] = datetime.datetime.strptime(maintenance_data['date'], "%Y-%m-%d").date()
-
     # Validate year field
     if maintenance_data.get('year') is None:
         raise HTTPException(status_code=400, detail="Year field is required")
@@ -84,9 +80,9 @@ def create_maintenance(
     if maintenance_data.get('year', 0) < 2020 or maintenance_data.get('year', 0) > 2030:
         raise HTTPException(status_code=400, detail="Year must be between 2020 and 2030")
     
-    #Validate the flat number exists in users table
+    # Validate the flat number exists in users table
     flat_number = maintenance_data.get('paid_by')
-    resident_user = db.query(models.User).filter(models.User.flat_number == str(flat_number)).first()
+    resident_user = db.query(models.User).filter(models.User.flat_number == flat_number).first()
     if not resident_user:
         raise HTTPException(
             status_code=400, 
@@ -94,69 +90,56 @@ def create_maintenance(
         )
     print(f"Validation successful: Flat {flat_number} belongs to {resident_user.name}")
 
-    # Allow all roles to add maintenance
     new_maintenance = models.Maintenance(**maintenance_data)
     db.add(new_maintenance)
     db.commit()
     db.refresh(new_maintenance)
-    return schemas.MaintenanceOut.model_validate(new_maintenance) 
-    
+    return schemas.MaintenanceOut.model_validate(new_maintenance)
 
 @router.get("/", response_model=list[schemas.MaintenanceOut])
 def list_maintenance(
-    username: str = Query(...),  # Require username as query param
+    username: str = Query(...),
     year: int = Query(None, description="Filter by year (e.g., 2025)"),
     month: str = Query(None, description="Filter by month name (e.g., January)"),
     db: Session = Depends(get_db)
 ):
     user = get_current_user(username, db)
-    # Only secretary/treasurer can view records
-
-    # Build query with optional filters
     query = db.query(models.Maintenance)
 
     if user.role == "member":
-        # Members can only view their own maintenance records
-        query = query.filter(models.Maintenance.created_by == user.id)
+        # Use flat_number instead of id
+        query = query.filter(models.Maintenance.created_by == user.flat_number)
     elif user.role not in ["secretary", "treasurer"]:
         raise HTTPException(status_code=403, detail="Not authorized to view maintenance records")
-
-    # if user.role not in ["secretary", "treasurer"]:
-    #     raise HTTPException(status_code=403, detail="Not authorized to view maintenance records")
     
-    # Apply filters if provided
     if year:
         query = query.filter(models.Maintenance.year == year)
     if month:
         query = query.filter(models.Maintenance.month == month)
     
     maintenances = query.all()
-    #return [schemas.MaintenanceOut.model_validate(m) for m in maintenances]
     return maintenances
 
 @router.get("/{maintenance_id}/receipt")
 def download_receipt(
     maintenance_id: int,
-    username: str = Query(...),  # Require username as query param
+    username: str = Query(...),
     db: Session = Depends(get_db)
 ):
-    
-    #validate user exist
     user = validate_user_exists(username, db)
-    #get maintenance record
     maintenance = db.query(models.Maintenance).filter(models.Maintenance.id == maintenance_id).first()
     if not maintenance:
         raise HTTPException(status_code=404, detail="Maintenance record not found")
 
-    payment_user = db.query(models.User).filter(models.User.flat_number == str(maintenance.paid_by)).first()
+    payment_user = db.query(models.User).filter(models.User.flat_number == maintenance.paid_by).first()
     if not payment_user:
         raise HTTPException(status_code=404, detail="User who made the payment not found")
     
-    if payment_user.id != user.id and user.role not in ["secretary", "treasurer"]:
+    # Use flat_number instead of id for comparison
+    if payment_user.flat_number != user.flat_number and user.role not in ["secretary", "treasurer"]:
         raise HTTPException(status_code=403, detail="Not authorized to download this receipt")
-    # GENERATE THE PDF 
+    
     pdf_buffer = create_pdf_receipt(maintenance, payment_user)
-
     filename = f"maintenance_receipt_{maintenance_id}.pdf"
     
     return StreamingResponse(

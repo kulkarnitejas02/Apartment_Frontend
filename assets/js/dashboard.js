@@ -1,4 +1,4 @@
-const BASE_URL = "https://affiliates-measured-needed-every.trycloudflare.com";
+const BASE_URL = "https://described-occasionally-break-group.trycloudflare.com";
 
 document.addEventListener("DOMContentLoaded", function() {
   const adminRoles = ["secretary", "treasurer"];
