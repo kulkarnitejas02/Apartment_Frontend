@@ -1,4 +1,4 @@
-const BASE_URL = "https://described-occasionally-break-group.trycloudflare.com";
+const BASE_URL = "https://fame-street-florida-specification.trycloudflare.com";
 
 // Navigation function with History API
 function navigateTo(event, path) {
@@ -99,7 +99,7 @@ async function handleForgetPassword() {
   };
 
   try {
-    const response = await fetch("https://described-occasionally-break-group.trycloudflare.com/reset-password", {
+    const response = await fetch(`${BASE_URL}/reset-password`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -134,7 +134,7 @@ async function handleRegister() {
   };
 
   try {
-    const response = await fetch("https://described-occasionally-break-group.trycloudflare.com/register", {
+    const response = await fetch(`${BASE_URL}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -160,7 +160,7 @@ async function handleLogin() {
   };
 
   try {
-    const response = await fetch("https://described-occasionally-break-group.trycloudflare.com/login", {
+    const response = await fetch(`${BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)

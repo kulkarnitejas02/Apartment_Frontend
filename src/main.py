@@ -53,7 +53,7 @@ if os.path.isdir("template"):
 
 @app.get('/')
 def read_index():
-    return FileResponse(os.path.join("static", "index.html"))
+    return FileResponse(os.path.join("index.html"))
 
 @app.get("/me")
 def get_me(session: models.User = Depends(get_current_user)):
