@@ -1,4 +1,4 @@
-const BASE_URL = "https://fame-street-florida-specification.trycloudflare.com";
+const BASE_URL = "https://tear-luggage-invitations-bytes.trycloudflare.com";
 
 // Navigation function with History API
 function navigateTo(event, path) {

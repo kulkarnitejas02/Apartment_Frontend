@@ -37,7 +37,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://societymanagementweb.netlify.app",  # Your production frontend
-        "https://fame-street-florida-specification.trycloudflare.com",
+        "https://tear-luggage-invitations-bytes.trycloudflare.com",
         "http://localhost:8000",  # For local testing (if needed)
         "http://127.0.0.1:8000"   # For local testing (if needed)
     ],

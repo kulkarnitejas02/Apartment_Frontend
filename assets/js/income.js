@@ -1,4 +1,4 @@
-const BASE_URL = "https://fame-street-florida-specification.trycloudflare.com";
+const BASE_URL = "https://tear-luggage-invitations-bytes.trycloudflare.com";
 
 document.addEventListener("DOMContentLoaded", function() {
   let name = "User";
