@@ -12,6 +12,7 @@ def get_db():
 def get_current_user_by_username(username: str, db: Session = Depends(get_db)):
     return db.query(models.User).filter(models.User.username == username).first()
 
+
 def get_current_user_id(username: str, db: Session = Depends(get_db)):
     user = get_current_user_by_username(username, db)
     if not user:
@@ -34,9 +35,11 @@ def validate_user_exists(username: str, db: Session = Depends(get_db)):
 
 # Session-based authentication (for cookie-based login)
 def get_current_user(session: str = Cookie(None), db: Session = Depends(get_db)):
+    print(f"DEBUG: Received session cookie: {session}")  # Add this debug line
+    
     if not session:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
+        raise HTTPException(status_code=401, detail="Not authenticated - no session cookie")
+    
     user = db.query(models.User).filter(models.User.username == session).first()
     if not user:
         raise HTTPException(status_code=401, detail="Invalid session")

@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   document.getElementById('logoutBtn').onclick = async function() {
-      await fetch('https://calls-blend-prayer-pour.trycloudflare.com/auth/logout', { method: 'POST', credentials: 'include' });
+      await fetch(`${BASE_URL}/auth/logout`, { method: 'POST', credentials: 'include' });
       window.location.href = '/';
   };
 });

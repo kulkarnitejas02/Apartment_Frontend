@@ -4,31 +4,46 @@ let username = null;
 let role = "guest";
 const BASE_URL = "https://fame-street-florida-specification.trycloudflare.com";
 
-
-// async function getUserInfo() {
-//     try {
-//       const response = await fetch("/me");
-//       if (response.ok) {
-//         const user = await response.json();
-//         username = user.username;
-//         //name = user.name || "User";
-//         role = user.role || "guest";
-//       }
-//     } catch {}
-// }
-
 const months = ["January", "February", "March", "April", "May", "June",
                "July", "August", "September", "October", "November", "December"];
 
-document.addEventListener("DOMContentLoaded", function() {
-    loadYearSummary();
+// Fetch user info first
+async function getUserInfo() {
+    try {
+        const response = await fetch(`${BASE_URL}/me`, { 
+            credentials: "include" 
+        });
+        if (response.ok) {
+            const user = await response.json();
+            username = user.username;
+            role = user.role || "guest";
+            return true;
+        } else {
+            console.error("Failed to fetch user info");
+            return false;
+        }
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+        return false;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async function() {
+    // Get user info first, then load data
+    const userLoaded = await getUserInfo();
+    if (userLoaded) {
+        loadYearSummary();
+    } else {
+        alert("Please login first");
+        window.location.href = "/index.html";
+    }
 });
 
 async function loadYearSummary() {
     currentYear = document.getElementById('yearSelect').value;
     
     try {
-        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}`, {
+        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(username)}&year=${currentYear}`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -94,7 +109,7 @@ async function selectMonth(month, monthTotal, recordCount) {
     
     // Load detailed records
     try {
-        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(userData.username)}&year=${currentYear}&month=${month}`, {
+        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(username)}&year=${currentYear}&month=${month}`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -104,11 +119,9 @@ async function selectMonth(month, monthTotal, recordCount) {
             displayMonthRecords(data.month_records, data.month_total);
         } else {
             console.error('Failed to load month records');
-            //alert('Failed to load month records. Please try again.');
         }
     } catch (error) {
         console.error('Error loading month records:', error);
-        //alert('Error loading month records. Please check your connection.');
     }
 }
 

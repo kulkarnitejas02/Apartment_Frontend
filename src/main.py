@@ -36,12 +36,16 @@ def startup():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://societymanagementweb.netlify.app"
+        "https://societymanagementweb.netlify.app",  # Your production frontend
+        "https://fame-street-florida-specification.trycloudflare.com",
+        "http://localhost:8000",  # For local testing (if needed)
+        "http://127.0.0.1:8000"   # For local testing (if needed)
     ],
-    allow_credentials=True,
+    allow_credentials=True,  # This is already correct - keeps cookies working
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Serve static frontend
 if os.path.isdir("static"):
@@ -67,7 +71,7 @@ def get_me(session: models.User = Depends(get_current_user)):
 @app.get("/users")
 def get_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
-    return [{"flat_number": user.flat_number} for user in users]
+    return [{"flat_number": user.flat_number, "name": user.name, "role": user.role} for user in users]
 
 @app.post("/register", response_model=schemas.UserOut)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -87,30 +91,32 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/login")
-def login(login_req: schemas.LoginRequest, db: Session = Depends(get_db)):
+def login(login_req: schemas.LoginRequest, response: Response, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(
         models.User.username == login_req.username,
         models.User.password == login_req.password
     ).first()
+    
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    #return {"message": f"Welcome {user.name} {user.role}!", "name": user.name, "Role": user.role}
-    response = JSONResponse(
-        content={
-            "message": f"Welcome {user.name}!",
-            "name": user.name,
-            "role": user.role,
-        }
-    )
+    
+    # Set cookie on the response object
     response.set_cookie(
         key="session", 
         value=user.username, 
         httponly=True,
-        secure=True,
-        samesite="None",
+        secure=True,  # Required for SameSite=None
+        samesite="none",  # Use lowercase "none" for cross-origin
         max_age=1800  # 30 minutes
     )
-    return response
+    
+    # Return the JSON data directly
+    return {
+        "message": f"Welcome {user.name}!",
+        "name": user.name,
+        "role": user.role,
+    }
+
 
 templates = Jinja2Templates(directory="templates")
 
@@ -156,8 +162,13 @@ def show_expense_records(request: Request, session: str = Depends(get_current_us
 
 @app.post("/logout")
 def logout(response: Response):
-    response.delete_cookie("session")
+    response.delete_cookie(
+        key="session",
+        secure=True,
+        samesite="none"  # Must match the cookie settings
+    )
     return {"message": "Logged out successfully"}
+
 
 @app.put("/reset-password")
 def reset_password(reset_req: dict, db: Session = Depends(get_db)):
