@@ -17,6 +17,15 @@ async function getUserInfo() {
             const user = await response.json();
             username = user.username;
             role = user.role || "guest";
+            
+            // Update the user info display
+            const userInfoElement = document.getElementById('userInfo');
+            if (userInfoElement) {
+                const roleCapitalized = role.charAt(0).toUpperCase() + role.slice(1);
+                userInfoElement.innerHTML = `Welcome, <strong>${user.name}</strong> (${roleCapitalized})`;
+            }
+            
+            console.log("User info loaded:", username, role);
             return true;
         } else {
             console.error("Failed to fetch user info");
@@ -28,19 +37,14 @@ async function getUserInfo() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
-    // Get user info first, then load data
-    const userLoaded = await getUserInfo();
-    if (userLoaded) {
-        loadYearSummary();
-    } else {
-        alert("Please login first");
-        window.location.href = "/index.html";
-    }
-});
-
-async function loadYearSummary() {
+// Make this function global
+window.loadYearSummary = async function() {
     currentYear = document.getElementById('yearSelect').value;
+    
+    if (!username) {
+        alert("User not loaded. Please refresh the page.");
+        return;
+    }
     
     try {
         const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(username)}&year=${currentYear}`, {
@@ -78,7 +82,11 @@ function displaySummary(data) {
         const monthData = data.monthly_summary[month];
         const monthCard = document.createElement('div');
         monthCard.className = 'month-card';
-        monthCard.onclick = () => selectMonth(month, monthData.total, monthData.count);
+        
+        // Pass event properly
+        monthCard.onclick = function(e) {
+            selectMonth(month, monthData.total, monthData.count, e);
+        };
         
         monthCard.innerHTML = `
             <div class="month-name">${month}</div>
@@ -94,35 +102,72 @@ function displaySummary(data) {
     selectedMonth = null;
 }
 
-async function selectMonth(month, monthTotal, recordCount) {
+async function selectMonth(month, monthTotal, recordCount, event) {
     selectedMonth = month;
     
-    // Update UI
+    console.log("=== SELECT MONTH DEBUG ===");
+    console.log("Month:", month);
+    console.log("Month Total:", monthTotal);
+    console.log("Record Count:", recordCount);
+    
+    // Update UI - highlight selected month
     document.querySelectorAll('.month-card').forEach(card => {
         card.classList.remove('selected');
     });
-    event.target.closest('.month-card').classList.add('selected');
     
-    // Update month total
-    document.getElementById('monthlyTotal').textContent = `₹${monthTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-    document.getElementById('monthlyCount').textContent = `${recordCount} records`;
+    // Highlight clicked card
+    if (event && event.target) {
+        const clickedCard = event.target.closest('.month-card');
+        if (clickedCard) {
+            clickedCard.classList.add('selected');
+            console.log("Card highlighted");
+        }
+    }
+    
+    // Update month total display
+    const monthlyTotalElement = document.getElementById('monthlyTotal');
+    const monthlyCountElement = document.getElementById('monthlyCount');
+    
+    if (monthlyTotalElement) {
+        const formattedTotal = `₹${monthTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        monthlyTotalElement.textContent = formattedTotal;
+        console.log("Updated monthlyTotal to:", formattedTotal);
+    } else {
+        console.error("ERROR: monthlyTotal element not found!");
+    }
+    
+    if (monthlyCountElement) {
+        const countText = `${recordCount} records`;
+        monthlyCountElement.textContent = countText;
+        console.log("Updated monthlyCount to:", countText);
+    } else {
+        console.error("ERROR: monthlyCount element not found!");
+    }
     
     // Load detailed records
     try {
-        const response = await fetch(`${BASE_URL}/income_records/?username=${encodeURIComponent(username)}&year=${currentYear}&month=${month}`, {
+        const url = `${BASE_URL}/income_records/?username=${encodeURIComponent(username)}&year=${currentYear}&month=${month}`;
+        console.log("Fetching URL:", url);
+        
+        const response = await fetch(url, {
             method: 'GET',
             credentials: 'include'
         });
         
         if (response.ok) {
             const data = await response.json();
+            console.log("Month data received:", data);
             displayMonthRecords(data.month_records, data.month_total);
         } else {
-            console.error('Failed to load month records');
+            console.error('Failed to load month records. Status:', response.status);
+            alert('Failed to load month records. Please try again.');
         }
     } catch (error) {
         console.error('Error loading month records:', error);
+        alert('Error loading month records. Please check your connection.');
     }
+    
+    console.log("=== END SELECT MONTH DEBUG ===");
 }
 
 function displayMonthRecords(records, total) {
@@ -173,3 +218,14 @@ function displayMonthRecords(records, total) {
     // Scroll to records section
     recordsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", async function() {
+    const userLoaded = await getUserInfo();
+    if (userLoaded) {
+        loadYearSummary();
+    } else {
+        alert("Please login first");
+        window.location.href = "/index.html";
+    }
+});

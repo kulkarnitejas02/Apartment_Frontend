@@ -8,11 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+        <a href="/dashboard.html" class="back-btn">← Back to Dashboard</a>
         
         <div class="header">
             <h1>📊 Expense Records Dashboard</h1>
-            <p>Welcome, <strong>{{ user.name }}</strong> ({{ user.role.title() }})</p>
+            <p>Welcome, <span id="userName"></span> (<span id="userRole"></span>)</p>
         </div>
 
         <!-- Filters -->
