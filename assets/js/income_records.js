@@ -4,8 +4,8 @@ let username = null;
 let role = "guest";
 const BASE_URL = "https://tear-luggage-invitations-bytes.trycloudflare.com";
 
-const months = ["January", "February", "March", "April", "May", "June",
-               "July", "August", "September", "October", "November", "December"];
+const months = ["january", "february", "march", "april", "may", "june",
+               "july", "august", "september", "october", "november", "december"];
 
 // Fetch user info first
 async function getUserInfo() {
