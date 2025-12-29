@@ -107,7 +107,8 @@ def login(login_req: schemas.LoginRequest, response: Response, db: Session = Dep
         httponly=True,
         secure=True,  # Required for SameSite=None
         samesite="none",  # Use lowercase "none" for cross-origin
-        max_age=1800  # 30 minutes
+        max_age=1800,  # 30 minutes
+        path="/"
     )
     
     # Return the JSON data directly
